@@ -1,12 +1,4 @@
-/**
- * ═══════════════════════════════════════════════════════════
- * CALCPRO — script.js
- * Premium Calculator — Vanilla ES6+ JavaScript
- * Features: Standard & Scientific modes, Memory, History,
- *           Keyboard support, Theme persistence, Ripple FX,
- *           Toast notifications, Copy to clipboard, Accessibility
- * ═══════════════════════════════════════════════════════════
- */
+
 
 "use strict";
 
