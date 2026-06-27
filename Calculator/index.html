@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <!-- ═══════════════════ META & SEO ═══════════════════ -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CalcPro — A premium, feature-rich calculator with scientific mode, history panel, keyboard support, and beautiful glassmorphism UI. Built with vanilla HTML, CSS, and JavaScript." />
+  <meta name="keywords" content="calculator, scientific calculator, web calculator, glassmorphism, dark mode" />
+  <meta name="author" content="CalcPro" />
+  <meta name="theme-color" content="#0B1120" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CalcPro — Premium Web Calculator" />
+  <meta property="og:description" content="A production-quality calculator with scientific mode, history, and beautiful glassmorphism design." />
+  <meta property="og:type" content="website" />
+
+  <title>CalcPro — Premium Web Calculator</title>
+
+  <!-- ═══════════════════ FONTS ═══════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════ ANIMATED BACKGROUND ═══════════════════ -->
+  <div class="bg-mesh" aria-hidden="true">
+    <div class="mesh-orb mesh-orb-1"></div>
+    <div class="mesh-orb mesh-orb-2"></div>
+    <div class="mesh-orb mesh-orb-3"></div>
+  </div>
+
+  <!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
+  <div class="loading-screen" id="loadingScreen" aria-hidden="true">
+    <div class="loader-ring">
+      <div></div><div></div><div></div><div></div>
+    </div>
+    <p class="loader-text">CalcPro</p>
+  </div>
+
+  <!-- ═══════════════════ TOAST CONTAINER ═══════════════════ -->
+  <div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ═══════════════════ MAIN APP ═══════════════════ -->
+  <main class="app" id="app" role="main">
+
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="app-brand">
+        <span class="brand-icon" aria-hidden="true">⊞</span>
+        <span class="brand-name">CalcPro</span>
+      </div>
+      <div class="header-controls">
+        <!-- Scientific Mode Toggle -->
+        <button
+          class="ctrl-btn"
+          id="sciToggleBtn"
+          aria-label="Toggle scientific mode"
+          aria-pressed="false"
+          title="Scientific Mode (Alt+S)"
+        >
+          <span class="ctrl-icon">ƒ(x)</span>
+        </button>
+
+        <!-- History Toggle -->
+        <button
+          class="ctrl-btn"
+          id="historyToggleBtn"
+          aria-label="Toggle history panel"
+          aria-pressed="false"
+          title="History (Alt+H)"
+        >
+          <span class="ctrl-icon">⧗</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button
+          class="ctrl-btn theme-btn"
+          id="themeToggleBtn"
+          aria-label="Toggle dark/light theme"
+          title="Toggle Theme (Alt+T)"
+        >
+          <span class="ctrl-icon theme-icon" id="themeIcon">☀</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ CALCULATOR WRAPPER ═══════════════════ -->
+    <div class="calc-layout" id="calcLayout">
+
+      <!-- ─── HISTORY PANEL ─── -->
+      <aside class="history-panel" id="historyPanel" aria-label="Calculation history" hidden>
+        <div class="history-header">
+          <h2 class="history-title">History</h2>
+          <button class="history-clear-btn" id="historyClearBtn" aria-label="Clear all history">
+            Clear all
+          </button>
+        </div>
+        <div class="history-list" id="historyList" role="list">
+          <div class="history-empty" id="historyEmpty">
+            <span class="history-empty-icon" aria-hidden="true">◎</span>
+            <p>No calculations yet.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ─── CALCULATOR CARD ─── -->
+      <article class="calculator" id="calculator" aria-label="Calculator">
+
+        <!-- DISPLAY -->
+        <section class="display-section" aria-label="Calculator display">
+          <!-- Memory indicator -->
+          <div class="display-meta">
+            <span class="memory-indicator" id="memIndicator" aria-label="Memory stored" hidden>M</span>
+            <span class="mode-indicator" id="modeIndicator">STD</span>
+            <button class="copy-btn" id="copyBtn" aria-label="Copy result to clipboard" title="Copy result (Ctrl+C)">
+              <span aria-hidden="true">⊕</span> Copy
+            </button>
+          </div>
+
+          <!-- Expression line (what the user typed) -->
+          <div class="expression-display" id="expressionDisplay" aria-live="polite" aria-label="Expression">
+            &nbsp;
+          </div>
+
+          <!-- Main result display -->
+          <div
+            class="main-display"
+            id="mainDisplay"
+            role="textbox"
+            aria-readonly="true"
+            aria-label="Current value"
+            aria-live="assertive"
+          >
+            0
+          </div>
+        </section>
+
+        <!-- MEMORY ROW -->
+        <div class="memory-row" id="memoryRow" aria-label="Memory functions">
+          <button class="btn btn-mem" data-action="mc"   aria-label="Memory clear">MC</button>
+          <button class="btn btn-mem" data-action="mr"   aria-label="Memory recall">MR</button>
+          <button class="btn btn-mem" data-action="mplus"  aria-label="Memory add">M+</button>
+          <button class="btn btn-mem" data-action="mminus" aria-label="Memory subtract">M−</button>
+          <button class="btn btn-mem" data-action="ms"   aria-label="Memory store">MS</button>
+        </div>
+
+        <!-- SCIENTIFIC ROW (hidden by default) -->
+        <div class="sci-row" id="sciRow" aria-label="Scientific functions" hidden>
+          <button class="btn btn-sci" data-action="sin"   aria-label="Sine">sin</button>
+          <button class="btn btn-sci" data-action="cos"   aria-label="Cosine">cos</button>
+          <button class="btn btn-sci" data-action="tan"   aria-label="Tangent">tan</button>
+          <button class="btn btn-sci" data-action="log"   aria-label="Logarithm base 10">log</button>
+          <button class="btn btn-sci" data-action="ln"    aria-label="Natural logarithm">ln</button>
+          <button class="btn btn-sci" data-action="sqrt"  aria-label="Square root">√</button>
+          <button class="btn btn-sci" data-action="square" aria-label="Square">x²</button>
+          <button class="btn btn-sci" data-action="power" aria-label="Power">xʸ</button>
+          <button class="btn btn-sci" data-action="mod"   aria-label="Modulus">mod</button>
+          <button class="btn btn-sci" data-action="pi"    aria-label="Pi constant">π</button>
+        </div>
+
+        <!-- MAIN KEYPAD -->
+        <div class="keypad" id="keypad" aria-label="Calculator keypad">
+
+          <!-- Row 1: AC, +/-, %, ÷ -->
+          <button class="btn btn-fn"   data-action="ac"      aria-label="All clear">AC</button>
+          <button class="btn btn-fn"   data-action="toggle-sign" aria-label="Toggle positive/negative">+/−</button>
+          <button class="btn btn-fn"   data-action="percent" aria-label="Percentage">%</button>
+          <button class="btn btn-op"   data-action="÷"       aria-label="Divide">÷</button>
+
+          <!-- Row 2: 7, 8, 9, × -->
+          <button class="btn btn-num"  data-action="7"       aria-label="Seven">7</button>
+          <button class="btn btn-num"  data-action="8"       aria-label="Eight">8</button>
+          <button class="btn btn-num"  data-action="9"       aria-label="Nine">9</button>
+          <button class="btn btn-op"   data-action="×"       aria-label="Multiply">×</button>
+
+          <!-- Row 3: 4, 5, 6, − -->
+          <button class="btn btn-num"  data-action="4"       aria-label="Four">4</button>
+          <button class="btn btn-num"  data-action="5"       aria-label="Five">5</button>
+          <button class="btn btn-num"  data-action="6"       aria-label="Six">6</button>
+          <button class="btn btn-op"   data-action="−"       aria-label="Subtract">−</button>
+
+          <!-- Row 4: 1, 2, 3, + -->
+          <button class="btn btn-num"  data-action="1"       aria-label="One">1</button>
+          <button class="btn btn-num"  data-action="2"       aria-label="Two">2</button>
+          <button class="btn btn-num"  data-action="3"       aria-label="Three">3</button>
+          <button class="btn btn-op"   data-action="+"       aria-label="Add">+</button>
+
+          <!-- Row 5: (, ), 0, ., ⌫, = -->
+          <button class="btn btn-fn"   data-action="("       aria-label="Open parenthesis">(</button>
+          <button class="btn btn-fn"   data-action=")"       aria-label="Close parenthesis">)</button>
+          <button class="btn btn-num"  data-action="0"       aria-label="Zero">0</button>
+          <button class="btn btn-num"  data-action="."       aria-label="Decimal point">.</button>
+          <button class="btn btn-fn"   data-action="backspace" aria-label="Backspace">⌫</button>
+          <button class="btn btn-eq"   data-action="="       aria-label="Equals">=</button>
+
+        </div>
+        <!-- END KEYPAD -->
+
+      </article>
+      <!-- END CALCULATOR CARD -->
+
+    </div>
+    <!-- END CALC LAYOUT -->
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>
+        <kbd>Enter</kbd> calculate &nbsp;·&nbsp;
+        <kbd>Esc</kbd> clear &nbsp;·&nbsp;
+        <kbd>Backspace</kbd> delete &nbsp;·&nbsp;
+        <kbd>Alt+S</kbd> scientific &nbsp;·&nbsp;
+        <kbd>Alt+H</kbd> history
+      </p>
+    </footer>
+
+  </main>
+  <!-- END APP -->
+
+  <script src="script.js"></script>
+</body>
+</html>
