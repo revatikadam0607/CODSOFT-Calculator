@@ -10,8 +10,7 @@ A clean and interactive calculator built with HTML, CSS, and JavaScript.
 
 ### 🚀 Live Demo
 
-*Add your deployed link here*
-
+https://codsoft-calculator-calcpro.netlify.app/
 ### 💻 Tech Stack
 
 HTML5 • CSS3 • JavaScript
